@@ -1,0 +1,43 @@
+{
+    "FixedFileInfo": {
+        "FileVersion": {
+            "Major": 1,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "ProductVersion": {
+            "Major": 1,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "FileFlagsMask": "3f",
+        "FileFlags ": "00",
+        "FileOS": "040004",
+        "FileType": "01",
+        "FileSubType": "00"
+    },
+    "StringFileInfo": {
+        "Comments": "POPO ME POST",
+        "CompanyName": "Kittizz",
+        "FileDescription": "POPO ME POST",
+        "FileVersion": "v1.0.0.0",
+        "InternalName": "popomepost.exe",
+        "LegalCopyright": "Copyright (c) 2021 Kittzz",
+        "LegalTrademarks": "",
+        "OriginalFilename": "main.go",
+        "PrivateBuild": "",
+        "ProductName": "POPO ME POST",
+        "ProductVersion": "v1.0.0.0",
+        "SpecialBuild": ""
+    },
+    "VarFileInfo": {
+        "Translation": {
+            "LangID": "0409",
+            "CharsetID": "04B0"
+        }
+    },
+    "IconPath": "",
+    "ManifestPath": ""
+}

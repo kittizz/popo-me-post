@@ -34,6 +34,8 @@ func (u *UI) Start(c chan<- os.Signal) error {
 	args = append(args, "--content-shell-hide-toolbar")
 	args = append(args, "--disable-infobars ")
 	args = append(args, "--disable-session-crashed-bubble")
+	args = append(args, "")
+
 	ui, err := lorca.New("", "", viper.GetInt("windows-x"), viper.GetInt("windows-y"), args...)
 	if err != nil {
 		return err
