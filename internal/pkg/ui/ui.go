@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"embed"
+	"fmt"
+	"log"
 	"os"
 	"runtime"
 	"syscall"
@@ -10,13 +13,14 @@ import (
 )
 
 type UI struct {
-	UI lorca.UI
+	UI  lorca.UI
+	log *log.Logger
 }
 
 func NewUI() *UI {
-
 	return &UI{
-		UI: nil,
+		UI:  nil,
+		log: log.New(os.Stderr, "[UI] ", log.Ldate|log.Ltime|log.Lshortfile),
 	}
 
 }
@@ -40,4 +44,27 @@ func (u *UI) Start(c chan<- os.Signal) error {
 		c <- syscall.SIGINT
 	}()
 	return nil
+}
+
+func (u *UI) LoadInitUI(fs *embed.FS) {
+
+	dirs, err := fs.ReadDir("init/javascript")
+	if err != nil {
+		u.log.Fatal(err)
+	}
+
+	for _, v := range dirs {
+		if v.IsDir() {
+			continue
+		}
+
+		u.log.Println(fmt.Sprintf("Load Init javascript > %s", v.Name()))
+		scr, err := fs.ReadFile("init/javascript/" + v.Name())
+		if err != nil {
+			u.log.Println("fail to load " + v.Name())
+			continue
+		}
+
+		u.UI.Eval(string(scr))
+	}
 }

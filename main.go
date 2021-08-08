@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"log"
 	"net"
@@ -18,7 +19,13 @@ import (
 
 var quit = make(chan os.Signal, 1)
 
+//go:embed init
+var initUI embed.FS
+
+var logx = log.New(os.Stderr, "[MAIN] ", log.Ldate|log.Ltime|log.Lshortfile)
+
 func main() {
+
 	godotenv.Load(".env")
 	viper.AutomaticEnv()
 	viper.SetDefault("windows-x", 1433)
@@ -26,24 +33,28 @@ func main() {
 
 	loc, err := time.LoadLocation("Asia/Bangkok")
 	if err != nil {
-		log.Fatalln("app: cannot load location")
+		logx.Fatalln("app: cannot load location")
 	}
 	time.Local = loc
 
 	c := dig.New()
 
 	if err := c.Provide(api.NewAPI); err != nil {
-		log.Fatalln("app: cannot provide API")
+		logx.Fatalln("app: cannot provide API")
 	}
 
 	if err := c.Provide(ui.NewUI); err != nil {
-		log.Fatalln("app: cannot provide UI")
+		logx.Fatalln("app: cannot provide UI")
 	}
+
+	c.Invoke(func() {
+
+	})
 
 	c.Invoke(func(api *api.API) *api.API {
 		ln, err := net.Listen("tcp", "127.0.0.1:0")
 		if err != nil {
-			log.Fatal(err)
+			logx.Fatal(err)
 		}
 
 		api.Addr = ln.Addr().String()
@@ -55,35 +66,38 @@ func main() {
 	c.Invoke(func(ui *ui.UI, api *api.API) {
 		err := ui.Start(quit)
 		if err != nil {
-			log.Fatal(err)
+			logx.Fatal(err)
 		}
+
 		err = ui.UI.Load(fmt.Sprintf("http://%s", api.Addr))
 		if err != nil {
-			log.Fatal(err)
+			logx.Fatal(err)
 		}
+
+		ui.LoadInitUI(&initUI)
 
 	})
 
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	c.Invoke(func(api *api.API) {
-		log.Println("stopping API...")
-
-		err := api.Fiber.Shutdown()
-		if err != nil {
-			log.Println(err)
-		}
-	})
-
 	c.Invoke(func(ui *ui.UI) {
-		log.Println("stopping UI...")
+		logx.Println("stopping UI...")
 
 		err := ui.UI.Close()
 		if err != nil {
-			log.Println(err)
+			logx.Println(err)
 		}
 	})
 
-	log.Println("exiting...")
+	c.Invoke(func(api *api.API) {
+		logx.Println("stopping API...")
+		api.Fiber.Server().CloseOnShutdown = true
+		err := api.Fiber.Shutdown()
+		if err != nil {
+			logx.Println(err)
+		}
+
+	})
+	logx.Println("exiting...")
 }
