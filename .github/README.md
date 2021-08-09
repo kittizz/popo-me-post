@@ -9,21 +9,23 @@
 </p>
 
 ## ⚙️ Installation
-Download the latest file from [here](https://golang.org/dl/).
+
+Download the latest file from [here](https://github.com/kittizz/popo-me-post/releases).
 
 ## 🎯 Features
+
 -   🖥 Dashboard
 -   📝 Campaigns Manager
 -   💼 Groups List Manager
 -   🧑🏻 Accounts Manager
-
 
 ## ⚠️ License
 
 Copyright (c) 2021-present [Kittizz](https://github.com/kittizz). `PoPoMePost` is free and open-source software licensed under the [MIT License](https://github.com/kittizz/popo-me-post/blob/main/LICENSE).
 
 **Third-party library licenses**
-- ... bababa
+
+-   ... bababa
 <!-- -   [schema](https://github.com/gorilla/schema/blob/master/LICENSE)
 -   [isatty](https://github.com/mattn/go-isatty/blob/master/LICENSE)
 -   [fasthttp](https://github.com/valyala/fasthttp/blob/master/LICENSE)

@@ -5,11 +5,13 @@ package main
 import (
 	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -124,4 +126,15 @@ func main() {
 	})
 
 	logx.Println("exiting...")
+}
+
+type EmbedFS struct {
+	f embed.FS
+}
+
+func (embed *EmbedFS) Open(name string) (fs.File, error) {
+	if strings.HasSuffix(name, "/") {
+		name += "index.html"
+	}
+	return embed.f.Open(name)
 }
