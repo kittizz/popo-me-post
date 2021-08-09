@@ -34,7 +34,6 @@ var dist embed.FS
 var logx = log.New(os.Stderr, "[MAIN] ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func main() {
-
 	loc, err := time.LoadLocation("Asia/Bangkok")
 	if err != nil {
 		logx.Fatalln("app: cannot load location")
@@ -92,16 +91,16 @@ func main() {
 		if viper.GetString("ENV") != config.DEVELOPMENT {
 			load = fmt.Sprintf("http://%s", api.Addr)
 		}
-		err = ui.UI.Load(load)
+		err = ui.Load(load)
 		if err != nil {
 			logx.Fatal(err)
 		}
-
 		ui.LoadInitUI(&initUI)
+		ui.Bind("ONxResize", ui.OnResize)
 
 	})
 
-	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT)
 	<-quit
 
 	c.Invoke(func(c *config.Config) {
@@ -116,7 +115,11 @@ func main() {
 	c.Invoke(func(ui *ui.UI) {
 		logx.Println("stopping UI...")
 
-		err := ui.UI.Close()
+		err := ui.Close()
+		if err != nil {
+			logx.Println(err)
+		}
+		err = os.RemoveAll(ui.Dir)
 		if err != nil {
 			logx.Println(err)
 		}

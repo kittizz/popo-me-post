@@ -1,4 +1,5 @@
 document.onkeydown = function (e) {
+    return
     // disable F12 key
     if (e.keyCode == 123) {
         return false

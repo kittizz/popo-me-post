@@ -5,3 +5,4 @@
 *.exe
 *.exe~
 resource.syso
+.goreload.exe

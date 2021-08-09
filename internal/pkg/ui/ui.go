@@ -3,6 +3,7 @@ package ui
 import (
 	"embed"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"runtime"
@@ -13,7 +14,8 @@ import (
 )
 
 type UI struct {
-	UI  lorca.UI
+	lorca.UI
+	Dir string
 	log *log.Logger
 
 	config *config.Config
@@ -38,14 +40,20 @@ func (u *UI) Start(c chan<- os.Signal) error {
 	args = append(args, "--disable-infobars ")
 	args = append(args, "--disable-session-crashed-bubble")
 
-	ui, err := lorca.New("", "", u.config.GetInt("windows-x"), u.config.GetInt("windows-y"), args...)
+	dir, err := ioutil.TempDir("", "popomepost")
+	if err != nil {
+		log.Fatal(err)
+	}
+	u.Dir = dir
+
+	ui, err := lorca.New("", u.Dir, u.config.GetInt("windows-x"), u.config.GetInt("windows-y"), args...)
 	if err != nil {
 		return err
 	}
 	u.UI = ui
 
 	go func() {
-		<-ui.Done()
+		<-u.Done()
 		c <- syscall.SIGINT
 	}()
 
@@ -71,6 +79,6 @@ func (u *UI) LoadInitUI(fs *embed.FS) {
 			continue
 		}
 
-		u.UI.Eval(string(scr))
+		u.Eval(string(scr))
 	}
 }
