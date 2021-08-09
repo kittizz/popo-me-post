@@ -1,3 +1,5 @@
+run:
+	go run .
 build:
 	@echo off
 	del /f popomepost.exe
