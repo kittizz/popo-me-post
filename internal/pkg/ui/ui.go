@@ -65,7 +65,7 @@ func (u *UI) LoadInitUI(fs *embed.FS) {
 			continue
 		}
 
-		u.log.Println(fmt.Sprintf("Load Init javascript > %s", v.Name()))
+		u.log.Println(fmt.Sprintf("Load Init javascript %s", v.Name()))
 		scr, err := fs.ReadFile("init/javascript/" + v.Name())
 		if err != nil {
 			u.log.Println("fail to load " + v.Name())

@@ -58,19 +58,26 @@ func main() {
 	c.Invoke(func(cfg *config.Config) {
 		cfg.LoadConfig()
 	})
-	c.Invoke(func(api *api.API) *api.API {
-		ln, err := net.Listen("tcp", "127.0.0.1:112")
+	c.Invoke(func(api *api.API, cfg *config.Config) *api.API {
+		port := "0"
+		if cfg.GetString("ENV") == config.DEVELOPMENT {
+			port = "112"
+		}
+		ln, err := net.Listen("tcp", "127.0.0.1:"+port)
 		if err != nil {
 			logx.Fatal(err)
 		}
 
 		api.Addr = ln.Addr().String()
 
-		api.Fiber.Use(filesystem.New(filesystem.Config{
-			Root:       http.FS(&EmbedFS{dist}),
-			PathPrefix: "vue/dist",
-			Browse:     true,
-		}))
+		if cfg.GetString("ENV") == config.PRODUCTION {
+			api.Fiber.Use(filesystem.New(filesystem.Config{
+				Root:       http.FS(&EmbedFS{dist}),
+				PathPrefix: "vue/dist",
+				Browse:     true,
+			}))
+		}
+
 		go api.Fiber.Listener(ln)
 		return api
 	})
@@ -82,7 +89,7 @@ func main() {
 		}
 
 		load := "http://localhost:8080"
-		if viper.GetString("mode") != "dev" {
+		if viper.GetString("ENV") != config.DEVELOPMENT {
 			load = fmt.Sprintf("http://%s", api.Addr)
 		}
 		err = ui.UI.Load(load)

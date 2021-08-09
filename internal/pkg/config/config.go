@@ -8,6 +8,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+var DEVELOPMENT = "DEVELOPMENT"
+var PRODUCTION = "PRODUCTION"
+
 type Config struct {
 	Path     string
 	FilePath string
@@ -37,9 +40,9 @@ func NewConfig() (*Config, error) {
 
 }
 func (c *Config) LoadConfig() {
-
+	c.log.Println("running mode " + c.GetString("ENV"))
 	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
-		c.log.Println("config: create config file")
+		c.log.Println("config: create config")
 		err = os.Mkdir(c.Path, os.ModeDir|0755)
 		if err != nil {
 			c.log.Fatalf("config: err %s", err)
@@ -49,7 +52,7 @@ func (c *Config) LoadConfig() {
 			c.log.Fatalf("config: err %s", err)
 		}
 	} else {
-		c.log.Println("config: load config file")
+		c.log.Println("config: load config")
 		file, err := os.Open(c.FilePath)
 		if err != nil {
 			c.log.Fatalf("config: err %s", err)
