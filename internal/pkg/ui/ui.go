@@ -41,10 +41,12 @@ func (u *UI) Start(c chan<- os.Signal) error {
 		return err
 	}
 	u.UI = ui
+
 	go func() {
 		<-ui.Done()
 		c <- syscall.SIGINT
 	}()
+
 	return nil
 }
 
