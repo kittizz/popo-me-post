@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/joho/godotenv"
 	"github.com/kittizz/popo-me-post/internal/pkg/api"
+	"github.com/kittizz/popo-me-post/internal/pkg/config"
 	"github.com/kittizz/popo-me-post/internal/pkg/ui"
 	"github.com/spf13/viper"
 	"go.uber.org/dig"
@@ -32,36 +32,6 @@ var dist embed.FS
 var logx = log.New(os.Stderr, "[MAIN] ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func main() {
-	godotenv.Load(".env")
-	viper.AutomaticEnv()
-	viper.SetDefault("windows-x", 1433)
-	viper.SetDefault("windows-y", 861)
-	viper.SetConfigType("json")
-
-	cfgPath, err := os.UserHomeDir()
-	cfgPath += "/.popomepost"
-	if err != nil {
-		logx.Fatalf("config: err %s", err)
-	}
-	if _, err := os.Stat(cfgPath); os.IsNotExist(err) {
-		logx.Println("config: create config file")
-		err = os.Mkdir(cfgPath, os.ModeDir|0755)
-		if err != nil {
-			logx.Fatalf("config: err %s", err)
-		}
-		err = viper.WriteConfigAs(cfgPath + "/config.json")
-		if err != nil {
-			logx.Fatalf("config: err %s", err)
-		}
-	} else {
-		logx.Println("config: load config file")
-		file, err := os.Open(cfgPath + "/config.json")
-		if err != nil {
-			logx.Fatalf("config: err %s", err)
-		}
-		viper.ReadConfig(file)
-
-	}
 
 	loc, err := time.LoadLocation("Asia/Bangkok")
 	if err != nil {
@@ -71,6 +41,10 @@ func main() {
 
 	c := dig.New()
 
+	if err := c.Provide(config.NewConfig); err != nil {
+		logx.Fatalln("app: cannot provide Config")
+	}
+
 	if err := c.Provide(api.NewAPI); err != nil {
 		logx.Fatalln("app: cannot provide API")
 	}
@@ -79,6 +53,9 @@ func main() {
 		logx.Fatalln("app: cannot provide UI")
 	}
 
+	c.Invoke(func(cfg *config.Config) {
+		cfg.LoadConfig()
+	})
 	c.Invoke(func(api *api.API) *api.API {
 		ln, err := net.Listen("tcp", "127.0.0.1:112")
 		if err != nil {
@@ -118,11 +95,14 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	logx.Println("saving config...")
-	err = viper.WriteConfigAs(cfgPath + "/config.json")
-	if err != nil {
-		logx.Printf("config: err %s", err)
-	}
+	c.Invoke(func(c *config.Config) {
+		logx.Println("saving config...")
+
+		err := c.Save()
+		if err != nil {
+			logx.Println(err)
+		}
+	})
 
 	c.Invoke(func(ui *ui.UI) {
 		logx.Println("stopping UI...")

@@ -8,19 +8,22 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/spf13/viper"
+	"github.com/kittizz/popo-me-post/internal/pkg/config"
 	"github.com/zserge/lorca"
 )
 
 type UI struct {
 	UI  lorca.UI
 	log *log.Logger
+
+	config *config.Config
 }
 
-func NewUI() *UI {
+func NewUI(config *config.Config) *UI {
 	return &UI{
-		UI:  nil,
-		log: log.New(os.Stderr, "[UI] ", log.Ldate|log.Ltime|log.Lshortfile),
+		UI:     nil,
+		log:    log.New(os.Stderr, "[UI] ", log.Ldate|log.Ltime|log.Lshortfile),
+		config: config,
 	}
 
 }
@@ -36,7 +39,7 @@ func (u *UI) Start(c chan<- os.Signal) error {
 	args = append(args, "--disable-session-crashed-bubble")
 	args = append(args, "")
 
-	ui, err := lorca.New("", "", viper.GetInt("windows-x"), viper.GetInt("windows-y"), args...)
+	ui, err := lorca.New("", "", u.config.GetInt("windows-x"), u.config.GetInt("windows-y"), args...)
 	if err != nil {
 		return err
 	}

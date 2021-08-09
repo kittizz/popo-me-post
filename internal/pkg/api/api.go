@@ -14,8 +14,11 @@ type API struct {
 }
 
 func NewAPI() (*API, error) {
-	app := fiber.New()
-
+	app := fiber.New(fiber.Config{
+		DisableStartupMessage: true,
+		ServerHeader:          "Fiber",
+		AppName:               "POPO ME POST",
+	})
 	return &API{
 		Fiber: app,
 		log:   log.New(os.Stderr, "[API] ", log.Ldate|log.Ltime|log.Lshortfile),
