@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://gofiber.io">
+  <a href="https://github.com/kittizz/popo-me-post">
     <img alt="Fiber" height="300" src="https://raw.githubusercontent.com/kittizz/popo-me-post/main/icons/PoPoMePost-logos_transparent.png">
   </a>
   <br>
