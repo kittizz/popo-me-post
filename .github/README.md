@@ -5,7 +5,7 @@
   <br>
 </p>
 <p align="center">
-  <b>PoPoMePost</b> is a <a href="https://facebook.com">Facebook</a> groups campaign, The <b>Marketing</b> tools easy for share facebook posts to multiple groups
+  <b>PoPoMePost</b> is a <a href="https://facebook.com">Facebook</a> groups campaign, The <b>Marketing Tools</b> easy for share facebook posts to multiple groups
 </p>
 
 ## ⚙️ Installation
