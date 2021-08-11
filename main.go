@@ -81,23 +81,26 @@ func main() {
 		go api.Fiber.Listener(ln)
 	})
 
-	c.Invoke(func(ui *ui.UI, api *api.API) {
+	c.Invoke(func(ui *ui.UI, api *api.API) *ui.UI {
 		err := ui.Start(quit)
 		if err != nil {
 			logx.Fatal(err)
 		}
 
-		load := "http://localhost:8080"
 		if viper.GetString("ENV") != config.DEVELOPMENT {
-			load = fmt.Sprintf("http://%s", api.Addr)
+			ui.Host = api.Addr
+		} else {
+			ui.Host = "localhost:8080"
 		}
-		err = ui.Load(load)
+
+		err = ui.Load(fmt.Sprintf("http://%s", ui.Host))
 		if err != nil {
 			logx.Fatal(err)
 		}
-		ui.LoadInitUI(&initUI)
 		ui.Bind("ONxResize", ui.OnResize)
-
+		ui.Bind("ONxLoadTab", ui.OnLoadTab)
+		ui.LoadInitUI(&initUI)
+		return ui
 	})
 
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT)

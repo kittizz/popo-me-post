@@ -9,15 +9,17 @@ import (
 	"runtime"
 	"syscall"
 
+	"github.com/kittizz/lorca"
 	"github.com/kittizz/popo-me-post/internal/pkg/config"
-	"github.com/zserge/lorca"
 )
 
 type UI struct {
 	lorca.UI
-	Dir string
-	log *log.Logger
+	Dir  string
+	Host string
 
+	log    *log.Logger
+	c      chan<- os.Signal
 	config *config.Config
 }
 
@@ -53,10 +55,10 @@ func (u *UI) Start(c chan<- os.Signal) error {
 		return err
 	}
 	u.UI = ui
-
+	u.c = c
 	go func() {
 		<-u.Done()
-		c <- syscall.SIGINT
+		u.Exit()
 	}()
 
 	return nil
@@ -81,6 +83,9 @@ func (u *UI) LoadInitUI(fs *embed.FS) {
 			continue
 		}
 
-		u.Eval(string(scr))
+		u.AddScriptToEvaluateOnNewDocument(string(scr))
 	}
+}
+func (u *UI) Exit() {
+	u.c <- syscall.SIGINT
 }
