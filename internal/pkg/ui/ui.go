@@ -39,7 +39,9 @@ func (u *UI) Start(c chan<- os.Signal) error {
 	args = append(args, "--content-shell-hide-toolbar")
 	args = append(args, "--disable-infobars ")
 	args = append(args, "--disable-session-crashed-bubble")
-
+	args = append(args, "--kiosk-print")
+	args = append(args, "--overscroll-history-navigation=0")
+	args = append(args, "--disable-pinch")
 	dir, err := ioutil.TempDir("", "popomepost")
 	if err != nil {
 		log.Fatal(err)

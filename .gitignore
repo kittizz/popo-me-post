@@ -6,3 +6,4 @@
 *.exe~
 resource.syso
 .goreload.exe
+node_modules

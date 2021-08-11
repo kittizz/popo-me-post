@@ -28,7 +28,7 @@ var quit = make(chan os.Signal, 1)
 //go:embed init
 var initUI embed.FS
 
-//go:embed vue/dist/*
+//go:embed ui/dist/*
 var dist embed.FS
 
 var logx = log.New(os.Stderr, "[MAIN] ", log.Ldate|log.Ltime|log.Lshortfile)
@@ -57,7 +57,8 @@ func main() {
 	c.Invoke(func(cfg *config.Config) {
 		cfg.LoadConfig()
 	})
-	c.Invoke(func(api *api.API, cfg *config.Config) *api.API {
+
+	c.Invoke(func(api *api.API, cfg *config.Config) {
 		port := "0"
 		if cfg.GetString("ENV") == config.DEVELOPMENT {
 			port = "112"
@@ -78,7 +79,6 @@ func main() {
 		}
 
 		go api.Fiber.Listener(ln)
-		return api
 	})
 
 	c.Invoke(func(ui *ui.UI, api *api.API) {
@@ -103,19 +103,17 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT)
 	<-quit
 
-	c.Invoke(func(c *config.Config) {
+	c.Invoke(func(ui *ui.UI, api *api.API, c *config.Config) {
 		logx.Println("saving config...")
 
 		err := c.Save()
 		if err != nil {
 			logx.Println(err)
 		}
-	})
 
-	c.Invoke(func(ui *ui.UI) {
 		logx.Println("stopping UI...")
 
-		err := ui.Close()
+		err = ui.Close()
 		if err != nil {
 			logx.Println(err)
 		}
@@ -123,18 +121,14 @@ func main() {
 		if err != nil {
 			logx.Println(err)
 		}
-	})
 
-	c.Invoke(func(api *api.API) {
 		logx.Println("stopping API...")
 		api.Fiber.Server().CloseOnShutdown = true
-		err := api.Fiber.Shutdown()
+		err = api.Fiber.Shutdown()
 		if err != nil {
 			logx.Println(err)
 		}
-
 	})
-
 	logx.Println("exiting...")
 }
 
