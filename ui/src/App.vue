@@ -6,6 +6,7 @@
 </template>
 <script>
 import "./assets/css/timos-icons.css";
+import "./assets/scss/app.scss";
 import Navbar from "./components/Navbar.vue";
 export default {
   name: "App",
@@ -19,9 +20,8 @@ export default {
     Helvetica Neue, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   /* color: #2c3e50; */
-  margin-top: 80px;
+  padding: 2.5vw 5vw;
 }
 /* 
  a.router-link-exact-active {
