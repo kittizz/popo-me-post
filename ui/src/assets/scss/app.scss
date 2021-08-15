@@ -39,3 +39,9 @@ h6 {
 .tc-modal {
     user-select: text !important;
 }
+
+.tc-avatar__tiny,
+.tc-avatar img {
+    height: 45px !important;
+    width: 45px !important;
+}

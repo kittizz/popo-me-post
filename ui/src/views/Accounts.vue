@@ -3,8 +3,8 @@
     <h1>Accounts</h1>
     <p>manage your Facebook account with tokens.</p>
 
-    <tl-grid>
-      <tc-card :hover="true">
+    <tl-grid arrangement="auto-fill" minWidth="650">
+      <tc-card :hover="true" style="grid-column: 1/4">
         <tc-table
           :selectable="true"
           :multiSelect="true"
@@ -52,19 +52,17 @@
           <div class="ta-l">
             <tc-button
               tfbackground="error"
-              variant="filled"
               name="Delete selection"
               icon="trashcan-duo"
             />
           </div>
           <div class="ta-r">
             <tc-button
-              variant="filled"
               name="Add"
               icon="list-add"
               @click="modalAdd = !modalAdd"
             />
-            <tc-button variant="filled" name="Refresh" icon="repeat" />
+            <tc-button name="Refresh" icon="repeat" />
           </div>
         </tl-grid>
       </tc-card>
@@ -82,15 +80,9 @@
           placeholder="Enter your facebook access_token"
           class="p-30"
         />
+        <tc-button slot="buttons" name="Submit" icon="checkmark" />
         <tc-button
           slot="buttons"
-          variant="filled"
-          name="Submit"
-          icon="checkmark"
-        />
-        <tc-button
-          slot="buttons"
-          variant="filled"
           tfbackground="error"
           name="Close"
           icon="cross"
