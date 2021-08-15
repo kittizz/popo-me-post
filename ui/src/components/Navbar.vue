@@ -24,12 +24,7 @@
       name="Accounts"
       @click="onClick('accounts')"
     />
-    <tc-navbar-item
-      slot="actions"
-      icon="gears"
-      name="Settings"
-      @click="onClick('settings')"
-    />
+    <tc-navbar-item slot="actions" icon="gears" @click="onClick('settings')" />
   </tc-navbar>
 </template>
 <script>

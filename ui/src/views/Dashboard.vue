@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Dashboard</h1>
-    <h4>shows campaign details and various statuses.</h4>
+    <p>shows campaign details and various statuses.</p>
     <tl-grid>
       <tc-card title="Title" />
       <tc-card title="Title" subtitle="Subtitle" />

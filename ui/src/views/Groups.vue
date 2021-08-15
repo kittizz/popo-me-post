@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Groups</h1>
-    <h4>prepare the target groups.</h4>
+    <p>prepare the target groups.</p>
     <tl-grid>
       <tc-card title="Title" />
       <tc-card title="Title" subtitle="Subtitle" />
